@@ -16,6 +16,7 @@
 			<bean class="org.apache.activemq.spring.ActiveMQConnectionFactory">
 				<property name="brokerURL" value="tcp://127.0.0.1:61616" />
 				<property name="trustAllPackages" value="true" />
+				<property name="trustedPackages" value="*" />
 				<property name="clientID" value="consumerClientConnection" />
 			</bean>
 		</property>
@@ -50,5 +51,23 @@
 	</jms:listener-container>
 
 	<bean id="alertHandler" class="com.net.lnk.spring.jms.activemq.AlertHandler" />
+
+	<!-- Spring 基于消息的 RPC 调用端 -->
+	<bean id="alertService" class="org.springframework.jms.remoting.JmsInvokerProxyFactoryBean">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="queueName" value="user.alert.queue" />
+		<property name="serviceInterface" value="com.net.lnk.spring.jms.activemq.AlertService" />
+	</bean>
+
+	<bean id="lingoAlertService" class="org.logicblaze.lingo.jms.JmsProxyFactoryBean"
+		p:connectionFactory-ref="connectionFactory" p:destination-ref="destination"
+		p:serviceInterface="com.net.lnk.spring.jms.activemq.AlertService">
+		<property name="metadataStrategy">
+			<bean id="metadataStrategy" class="org.logicblaze.lingo.SimpleMetadataStrategy">
+				<!-- 标识所有的void方法被异步调用并立刻返回 -->
+				<constructor-arg value="true" />
+			</bean>
+		</property>
+	</bean>
 
 </beans>

@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jms="http://www.springframework.org/schema/jms"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/context
-	http://www.springframework.org/schema/context/spring-context.xsd">
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/jms
+    http://www.springframework.org/schema/jms/spring-jms.xsd">
 
 	<context:component-scan base-package="com.net.lnk.spring.jms.activemq" />
 
@@ -15,6 +18,8 @@
 				<property name="brokerURL" value="tcp://127.0.0.1:61616" />
 				<property name="clientID" value="providerClientConnection" />
 				<property name="useAsyncSend" value="true" />
+				<property name="trustAllPackages" value="true" />
+				<property name="trustedPackages" value="*" />
 			</bean>
 		</property>
 	</bean>
@@ -43,6 +48,21 @@
 
 	<bean id="topic" class="org.apache.activemq.command.ActiveMQTopic">
 		<constructor-arg value="user.alert.topic" />
+	</bean>
+
+	<!-- Spring 基于消息的 RPC -->
+	<bean id="alertServiceExporter" class="org.springframework.jms.remoting.JmsInvokerServiceExporter"
+		p:service-ref="alertService" p:serviceInterface="com.net.lnk.spring.jms.activemq.AlertService">
+	</bean>
+	<jms:listener-container connection-factory="connectionFactory" acknowledge="auto"
+		container-type="default" destination-type="queue">
+		<jms:listener destination="user.alert.queue" ref="alertServiceExporter" />
+	</jms:listener-container>
+
+	<!-- Spring 基于消息的 RPC 是同步调用，Lingo 提供了异步调用实现 -->
+	<bean id="lingoAlertServiceExporter" class="org.logicblaze.lingo.jms.JmsServiceExporter"
+		p:connectionFactory-ref="connectionFactory" p:destination-ref="destination" p:service-ref="alertService"
+		p:serviceInterface="com.net.lnk.spring.jms.activemq.AlertService">
 	</bean>
 
 </beans>

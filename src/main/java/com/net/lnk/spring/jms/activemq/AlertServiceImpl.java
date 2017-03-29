@@ -47,4 +47,19 @@ public class AlertServiceImpl implements AlertService {
 		});
 	}
 
+	public UserBean findUser(String fullname) {
+
+		System.out.println("Find user, fullname = " + fullname);
+
+		UserBean user = new UserBean();
+		user.setFullname(fullname);
+		user.setUsername("DuDuDu..");
+		user.setPassword("dududu123");
+		return user;
+	}
+
+	public void saveUser(UserBean user) {
+		System.out.println("Save user : " + user.toString());
+	}
+
 }

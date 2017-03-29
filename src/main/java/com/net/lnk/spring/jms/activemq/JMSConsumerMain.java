@@ -9,7 +9,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Ben
  * @memo 2017年3月29日
  */
-public class JMSMain {
+public class JMSConsumerMain {
 
 	public static void main(String[] args) {
 

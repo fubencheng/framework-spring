@@ -12,4 +12,8 @@ public interface AlertService {
 
 	void sendUserAlertByTopic(UserBean user);
 
+	UserBean findUser(String fullname);
+
+	void saveUser(UserBean user);
+
 }

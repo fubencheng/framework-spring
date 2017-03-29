@@ -15,6 +15,7 @@
 		<activemq.spring.version>5.14.3</activemq.spring.version>
 		<junit.version>4.11</junit.version>
 		<logback.version>1.1.11</logback.version>
+		<lingo.version>1.3</lingo.version>
 	</properties>
 
 	<dependencies>
@@ -102,6 +103,30 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.version}</version>
+		</dependency>
+		<!-- ===========lingo=========== -->
+		<dependency>
+			<groupId>org.logicblaze.lingo</groupId>
+			<artifactId>lingo</artifactId>
+			<version>${lingo.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>spring</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>activeio-core</artifactId>
+					<groupId>incubator-activemq</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>activemq-core</artifactId>
+					<groupId>incubator-activemq</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 </project>
