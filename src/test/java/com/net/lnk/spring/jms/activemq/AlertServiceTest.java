@@ -28,4 +28,23 @@ public class AlertServiceTest {
 		alertService.sendUserAlert(user);
 	}
 
+	@Test
+	public void testSendUserAlertByTopic() {
+		UserBean user = new UserBean();
+		user.setUsername("Lily");
+		user.setFullname("Lily.Doss.Topic");
+		user.setPassword("DaDa123Topic");
+		alertService.sendUserAlertByTopic(user);
+	}
+
+	@Test
+	public void testBatchSendUserAlertByTopic() {
+		for (int i = 0; i < 10000; i++) {
+			UserBean user = new UserBean();
+			user.setUsername("Lily" + i);
+			user.setFullname("Lily.Doss" + i);
+			user.setPassword("DaDa.." + i);
+			alertService.sendUserAlertByTopic(user);
+		}
+	}
 }

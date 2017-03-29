@@ -22,4 +22,9 @@ public class ConsumerServiceTest {
 		consumerService.getActiveMQObjectMessage();
 	}
 
+	@Test
+	public void testGetActiveMQTopicObjectMessage() {
+		consumerService.getActiveMQTopicObjectMessage();
+	}
+
 }

@@ -7,5 +7,7 @@ package com.net.lnk.spring.jms.activemq;
 public interface ConsumerService {
 
 	void getActiveMQObjectMessage();
-	
+
+	void getActiveMQTopicObjectMessage();
+
 }

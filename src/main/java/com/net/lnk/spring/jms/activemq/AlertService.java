@@ -10,4 +10,6 @@ public interface AlertService {
 
 	void sendUserAlert(UserBean user);
 
+	void sendUserAlertByTopic(UserBean user);
+
 }
