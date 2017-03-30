@@ -3,7 +3,6 @@ package com.net.lnk.spring.jms.activemq;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -18,12 +17,7 @@ import com.net.lnk.spring.model.UserBean;
 public class AlertServiceTest {
 
 	@Autowired
-	@Qualifier("alertService")
 	private AlertService alertService;
-
-	@Autowired
-	@Qualifier("lingoAlertService")
-	private AlertService lingoAlertService;
 
 	@Test
 	public void testSendUserAlert() {
@@ -45,12 +39,19 @@ public class AlertServiceTest {
 
 	@Test
 	public void testBatchSendUserAlertByTopic() {
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < 10000000; i++) {
 			UserBean user = new UserBean();
 			user.setUsername("Lily" + i);
 			user.setFullname("Lily.Doss" + i);
 			user.setPassword("DaDa.." + i);
 			alertService.sendUserAlertByTopic(user);
+			if (i % 100000 == 0) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
