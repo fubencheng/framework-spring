@@ -11,14 +11,50 @@
 
 	<bean id="audience" class="com.net.lnk.spring.aop.Audience" />
 
+	<bean id="violin" class="com.net.lnk.spring.aop.Violin" />
+
+	<bean id="instrumentalist" class="com.net.lnk.spring.aop.Instrumentalist">
+		<property name="song" value="dream it possible" />
+		<property name="instrument" ref="violin" />
+	</bean>
+
+	<!-- 基于XML 配置 -->
 	<aop:config>
 		<aop:aspect ref="audience">
-			<aop:pointcut id="performance" expression="execution(*com.net.spring.aop.Performer.perform(..))" />
+			<aop:pointcut id="performance" expression="execution(* com.net.lnk.spring.aop.Performer.perform(..))" />
 			<aop:before pointcut-ref="performance" method="takeSeats" />
 			<aop:before pointcut-ref="performance" method="turnOffCellPhones" />
 			<aop:after-returning pointcut-ref="performance" method="applaud" />
 			<aop:after-throwing pointcut-ref="performance" method="demandRefund" />
 		</aop:aspect>
 	</aop:config>
+
+	<bean id="userService" class="com.net.lnk.spring.aop.UserServiceImpl" />
+
+	<!-- 基于自动代理 -->
+	<bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+		<property name="beanNames">
+			<list>
+				<value>*Service</value>
+				<value>*ServiceImpl</value>
+			</list>
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<value>logInterceptor</value>
+				<value>transactionInterceptor</value>
+				<value>myMethodBeforeAdvice</value>
+				<value>myAfterReturningAdvice</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="logInterceptor" class="com.net.lnk.spring.aop.interceptor.LogInterceptor" />
+	<bean id="transactionInterceptor" class="com.net.lnk.spring.aop.interceptor.TransactionInterceptor" />
+	<bean id="myMethodBeforeAdvice" class="com.net.lnk.spring.aop.advice.MyMethodBeforeAdvice" />
+	<bean id="myAfterReturningAdvice" class="com.net.lnk.spring.aop.advice.MyAfterReturningAdvice" />
+
+	<!-- 基于注解的实现 -->
+	<aop:aspectj-autoproxy />
+	<context:component-scan base-package="com.net.lnk.spring.aop.aspect" />
 
 </beans>
