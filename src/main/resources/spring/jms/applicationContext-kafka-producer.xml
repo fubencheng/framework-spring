@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:int-kafka="http://www.springframework.org/schema/integration/kafka" xmlns:int="http://www.springframework.org/schema/integration"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/integration
+    http://www.springframework.org/schema/integration/spring-integration.xsd
+    http://www.springframework.org/schema/integration/kafka
+    http://www.springframework.org/schema/integration/kafka/spring-integration-kafka.xsd">
+
+	<context:component-scan base-package="com.net.lnk.spring.jms.kafka" />
+
+	<bean id="kafkaProducer" class="com.net.lnk.spring.jms.kafka.KafkaProducerFactory" />
+
+	<!--kafka config -->
+	<!-- <int:channel id="producerChannel" /> -->
+
+	<!-- <int-kafka:producer-context id="kafkaProducerContext" -->
+	<!-- producer-properties="producerProperties"> -->
+	<!-- <int-kafka:producer-configurations> -->
+	<!-- <int-kafka:producer-configuration broker-list="localhost:9092" -->
+	<!-- key-serializer="stringSerializer" value-class-type="java.lang.String" value-serializer="stringSerializer" -->
+	<!-- topic="helloworldTopic" /> -->
+
+	<!-- </int-kafka:producer-configurations> -->
+	<!-- </int-kafka:producer-context> -->
+
+	<!-- <int-kafka:outbound-channel-adapter kafka-producer-context-ref="kafkaProducerContext" -->
+	<!-- auto-startup="true" channel="producerChannel" order="1"> -->
+	<!-- </int-kafka:outbound-channel-adapter> -->
+
+
+</beans>

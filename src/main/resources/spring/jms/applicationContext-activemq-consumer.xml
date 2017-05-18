@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jms="http://www.springframework.org/schema/jms"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/jms
+    http://www.springframework.org/schema/jms/spring-jms.xsd">
+
+	<context:component-scan base-package="com.net.lnk.spring.jms.activemq" />
+
+	<bean id="connectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+		<property name="connectionFactory">
+			<bean class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+				<property name="brokerURL" value="tcp://127.0.0.1:61616" />
+				<property name="trustAllPackages" value="true" />
+				<property name="trustedPackages" value="*" />
+				<property name="clientID" value="consumerClientConnection" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="defaultDestination" ref="destination" />
+		<property name="pubSubDomain" value="false" />
+	</bean>
+
+	<bean id="destination" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="user.alert.queue" />
+	</bean>
+
+	<bean id="jmsTopicTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<constructor-arg ref="connectionFactory" />
+		<property name="defaultDestination" ref="topic" />
+		<property name="pubSubDomain" value="true" />
+		<!-- 消息应答方式：Session.AUTO_ACKNOWLEDGE 消息自动签收，Session.CLIENT_ACKNOWLEDGE 客户端调用acknowledge方法手动签收，Session.DUPS_OK_ACKNOWLEDGE 
+			不是必须签收，消息可能会重复发送 -->
+		<property name="sessionAcknowledgeMode" value="1" />
+	</bean>
+
+	<bean id="topic" class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg value="user.alert.topic" />
+	</bean>
+
+	<jms:listener-container connection-factory="connectionFactory" acknowledge="auto"
+		destination-type="topic" container-type="default">
+		<jms:listener destination="user.alert.topic" ref="alertHandler" method="handleAlert" />
+	</jms:listener-container>
+
+	<bean id="alertHandler" class="com.net.lnk.spring.jms.activemq.AlertHandler" />
+
+	<!-- Spring 基于消息的 RPC 调用端 -->
+	<bean id="alertService" class="org.springframework.jms.remoting.JmsInvokerProxyFactoryBean">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="queueName" value="user.alert.queue" />
+		<property name="serviceInterface" value="com.net.lnk.spring.jms.activemq.AlertService" />
+	</bean>
+
+	<bean id="lingoAlertService" class="org.logicblaze.lingo.jms.JmsProxyFactoryBean"
+		p:connectionFactory-ref="connectionFactory" p:destination-ref="destination"
+		p:serviceInterface="com.net.lnk.spring.jms.activemq.AlertService">
+		<property name="metadataStrategy">
+			<bean id="metadataStrategy" class="org.logicblaze.lingo.SimpleMetadataStrategy">
+				<!-- 标识所有的void方法被异步调用并立刻返回 -->
+				<constructor-arg value="true" />
+			</bean>
+		</property>
+	</bean>
+
+</beans>
